@@ -4,9 +4,10 @@ import Mathe from "./components/MathCalulator";
 import dataDemo from "./demoData";
 import "./App.scss";
 
+import profile, { NameContext, EmailContext } from "./context/profieContext";
+
 class App extends React.Component {
   constructor(props) {
-    console.log(Mathe.subject);
     super(props);
     this.state = {
       _Average: null,
@@ -14,7 +15,12 @@ class App extends React.Component {
       showArt: true,
       showMath: true,
       extras_Average: null,
-      extras: 5
+      extras: 5,
+      email: profile.email,
+      nameContext: {
+        name: profile.name,
+        changeName: this.changeName
+      }
     };
     this.extras = {
       art: 0,
@@ -32,6 +38,12 @@ class App extends React.Component {
       });
     };
   }
+  changeName = e => {
+    e.persist();
+    this.setState({
+      nameContext: { name: e.target.value, changeName: this.changeName }
+    });
+  };
   handelExtras = e => {
     this.extras[e.code] = e.extras;
   };
@@ -54,8 +66,23 @@ class App extends React.Component {
     });
   };
   render() {
+    console.log(this.context);
     return (
       <div className="average_warp">
+        <p>
+          email:<input
+            value={this.state.email}
+            onChange={e => {
+              this.setState({
+                email: e.target.value
+              });
+            }}
+            style={{ width: "200px" }}
+          />
+        </p>
+        <p>
+          name:{this.state.nameContext.name}
+        </p>
         <p>
           _Subject:{this.state._Subject.map(e =>
             <span key={e.code}>
@@ -64,7 +91,7 @@ class App extends React.Component {
           )}
         </p>
         <p>
-          _Average{this.state._Average}
+          _Average:{this.state._Average}
         </p>
         <p>
           Extras_Average: {this.state.extras_Average}
@@ -74,55 +101,60 @@ class App extends React.Component {
             <button onClick={this.toggle} value="Art">
               显示/影藏
             </button>
-            {this.state.showArt &&
-              <Art
-                title="请计算美术成绩"
-                onExtrasChange={this.handelExtras}
-                extrasElm={(extras, handelExtras) => {
-                  this.extras.art = extras;
-                  return (
-                    <p>
-                      extras:<input
-                        type="number"
-                        name="art"
-                        value={extras}
-                        onChange={handelExtras}
-                      />
-                    </p>
-                  );
-                }}
-              />}
+            <NameContext.Provider value={this.state.nameContext}>
+              {this.state.showArt &&
+                <Art
+                  title="请计算美术成绩"
+                  onExtrasChange={this.handelExtras}
+                  extrasElm={(extras, handelExtras) => {
+                    this.extras.art = extras;
+                    return (
+                      <p>
+                        extras:<input
+                          type="number"
+                          name="art"
+                          value={extras}
+                          onChange={handelExtras}
+                        />
+                      </p>
+                    );
+                  }}
+                />}
+            </NameContext.Provider>
           </div>
           <div>
             <button onClick={this.toggle} value="Math">
               显示/影藏
             </button>
-            {this.state.showMath &&
-              <Mathe title="请计算数学成绩">
-                <p>
-                  extras:<input
-                    type="range"
-                    min="-20"
-                    max="20"
-                    step="5"
-                    name="mathe"
-                    value={this.state.extras}
-                    onChange={e => {
-                      const extras = e.target.value;
-                      this.handelExtras({
-                        code: "mathe",
-                        extras
-                      });
-                      this.setState({ extras });
-                    }}
-                  />
-                  <span>{this.state.extras}</span>
-                </p>
-              </Mathe>}
+            <EmailContext.Provider value={this.state.email}>
+              {this.state.showMath &&
+                <Mathe title="请计算数学成绩">
+                  <p>
+                    extras:<input
+                      type="range"
+                      min="-20"
+                      max="20"
+                      step="5"
+                      name="mathe"
+                      value={this.state.extras}
+                      onChange={e => {
+                        const extras = e.target.value;
+                        this.handelExtras({
+                          code: "mathe",
+                          extras
+                        });
+                        this.setState({ extras });
+                      }}
+                    />
+                    <span>{this.state.extras}</span>
+                  </p>
+                </Mathe>}
+            </EmailContext.Provider>
           </div>
         </div>
       </div>
     );
   }
 }
+App.contextType = NameContext;
 export default App;
