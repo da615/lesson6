@@ -7,9 +7,6 @@ export default function withAverage(Warp, subject) {
     componentDidMount() {
       demoData._addSubject(subject);
     }
-    componentWillUnmount() {
-      demoData._removeSubject(subject);
-    }
     _removeSubject(sub) {
       sub && demoData._removeSubject(sub);
     }
@@ -26,6 +23,7 @@ export default function withAverage(Warp, subject) {
         <Warp
           {...passThroughProps}
           _editScore={this._editScore}
+          _removeSubject={this._removeSubject}
         />
         </>
       );

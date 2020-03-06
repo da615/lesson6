@@ -11,12 +11,18 @@ class Art extends React.Component {
     };
   }
   static subject = { code: "art", score: 0 };
+  componentWillUnmount() {
+    this.props._removeSubject(Art.subject);
+  }
   handelExtras = e => {
-    this.props.onExtrasChange(e);
     e.persist();
     let extras = e.target.value;
     this.setState({
       extras
+    });
+    this.props.onExtrasChange({
+      extras: parseInt(extras, 10),
+      code: e.target.name
     });
   };
   render() {
@@ -24,7 +30,7 @@ class Art extends React.Component {
       <NameContext.Consumer>
         {({ name, changeName }) =>
           <span>
-            <input name="name" value={name} onChange={changeName} />
+            <input value={name} onChange={changeName} />
             <Calculator cb={this.props._editScore} />
             {this.props.extrasElm(this.state.extras, this.handelExtras)}
           </span>}

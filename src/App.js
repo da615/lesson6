@@ -9,20 +9,22 @@ import profile, { NameContext, EmailContext } from "./context/profieContext";
 class App extends React.Component {
   constructor(props) {
     super(props);
-
-    this.extras = {
-      art: 0,
-      mathe: 5
-    };
     this.state = {
       _Average: null,
       _Subject: [],
       showArt: true,
       showMath: true,
       extras_Average: null,
+      extras: 5,
       email: profile.email,
-      name: profile.name,
-      matcheExtra: this.extras.mathe
+      nameContext: {
+        name: profile.name,
+        changeName: this.changeName
+      }
+    };
+    this.extras = {
+      art: 0,
+      mathe: 0
     };
     dataDemo.aerageChangeCb = _Average => {
       this.setState({
@@ -36,20 +38,14 @@ class App extends React.Component {
       });
     };
   }
-  handelContextChange = e => {
+  changeName = e => {
     e.persist();
     this.setState({
-      [e.target.name]: e.target.value
+      nameContext: { name: e.target.value, changeName: this.changeName }
     });
   };
   handelExtras = e => {
-    e.persist();
-    this.extras[e.target.name] = parseInt(e.target.value, 10);
-    if (e.target.name === "mathe") {
-      this.setState({
-        matcheExtra: this.extras.mathe
-      });
-    }
+    this.extras[e.code] = e.extras;
   };
   handelExtras_Average = () => {
     let extras_Average = null;
@@ -75,14 +71,17 @@ class App extends React.Component {
       <div className="average_warp">
         <p>
           email:<input
-            name="email"
             value={this.state.email}
-            onChange={this.handelContextChange}
+            onChange={e => {
+              this.setState({
+                email: e.target.value
+              });
+            }}
             style={{ width: "200px" }}
           />
         </p>
         <p>
-          name:{this.state.name}
+          name:{this.state.nameContext.name}
         </p>
         <p>
           _Subject:{this.state._Subject.map(e =>
@@ -102,12 +101,7 @@ class App extends React.Component {
             <button onClick={this.toggle} value="Art">
               显示/影藏
             </button>
-            <NameContext.Provider
-              value={{
-                name: this.state.name,
-                changeName: this.handelContextChange
-              }}
-            >
+            <NameContext.Provider value={this.state.nameContext}>
               {this.state.showArt &&
                 <Art
                   title="请计算美术成绩"
@@ -142,10 +136,17 @@ class App extends React.Component {
                       max="20"
                       step="5"
                       name="mathe"
-                      value={this.state.matcheExtra}
-                      onChange={this.handelExtras}
+                      value={this.state.extras}
+                      onChange={e => {
+                        const extras = e.target.value;
+                        this.handelExtras({
+                          code: "mathe",
+                          extras
+                        });
+                        this.setState({ extras });
+                      }}
                     />
-                    <span>{this.state.matcheExtra}</span>
+                    <span>{this.state.extras}</span>
                   </p>
                 </Mathe>}
             </EmailContext.Provider>
