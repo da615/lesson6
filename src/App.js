@@ -71,8 +71,6 @@ class App extends React.Component {
             <button onClick={this.toggle} value="Art">
               显示/影藏
             </button>
-            {/*通过NameContext.Provider向Art组件提供相关值*/}
-            {/*在<Art>组件上通过自定义属性传值利用 prop render的方式在子组件渲染附加分数的组件，并且实现在子组件修改附加分值的时候要在当前组件保存附加分数的值*/}
             {this.state.showArt && <Art title="请计算美术成绩" />}
           </div>
           <div>
@@ -82,7 +80,6 @@ class App extends React.Component {
             {/*通过EmailContext.Provider向Mathe组件提供相关值*/}
             {this.state.showMath &&
               <Mathe title="请计算数学成绩">
-                {/*在<Mathe>组件的内部定义附加分数的组件，并且实现能同步修改和显示附加分数的值*/}
               </Mathe>}
           </div>
         </div>
