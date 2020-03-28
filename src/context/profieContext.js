@@ -2,7 +2,7 @@ import React from "react";
 
 const profile = {
   name: "daxing.li",
-  email: "daxing.li@accenture.com"
+  email: "daxing_li@accenture.com"
 };
 export default profile;
 export const NameContext = React.createContext({
